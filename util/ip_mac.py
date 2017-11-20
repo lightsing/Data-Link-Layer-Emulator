@@ -1,8 +1,25 @@
 """
 IP MAC utils
 """
+import json
+from socket import *
+
 from socket import inet_aton, inet_ntoa
 
+with open('config.json') as reader:
+    config = json.load(reader)
+
+
+def get_local_ipv4_address() -> str:
+    """
+    Get local IPv4 Address
+    :return: IPv4 Address str
+    """
+    test = socket(AF_INET, SOCK_DGRAM)
+    test.connect((config['test']['ip'], config['test']['port']))
+    ip = test.getsockname()[0]
+    test.close()
+    return ip
 
 def ip2mac(ip) -> str:
     """

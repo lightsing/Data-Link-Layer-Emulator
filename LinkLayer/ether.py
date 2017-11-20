@@ -17,11 +17,11 @@ class IncomeHandler(threading.Thread):
             if address[1] != self.link_layer.config['port']:
                 # ignore any non common port
                 continue
-            mac, payload = unpack_frame(frame)
-            if mac not in self.link_layer.mac_table:
-                self.link_layer.mac_table[mac] = address[0]
+            src_mac, dst_mac, payload = unpack_frame(frame)
+            if src_mac not in self.link_layer.mac_table:
+                self.link_layer.mac_table[src_mac] = address[0]
             # calling callback
-            self.link_layer.callback(payload)
+            self.link_layer.callback(dst_mac, payload)
 
 class LinkLayer:
     """
@@ -49,7 +49,7 @@ class LinkLayer:
         self.income_handler = IncomeHandler(self)
         self.income_handler.start()
 
-    def sendto(self, dst_mac: bytes, payload: bytes):
+    def sendto(self, dst_mac, payload: bytes, src_mac=None):
         """
         Sending ether frame
         :param dst_mac: destination mac address
@@ -59,7 +59,9 @@ class LinkLayer:
         if random() < self.config['loss']:
             # drop frame
             return
-        frame = pack_frame(dst_mac, payload)
+        if src_mac is None:
+            src_mac = self.MAC
+        frame = pack_frame(src_mac, dst_mac, payload)
         if dst_mac in self.mac_table:
             self.sock.sendto(frame, (self.mac_table[dst_mac], self.port))
         else:

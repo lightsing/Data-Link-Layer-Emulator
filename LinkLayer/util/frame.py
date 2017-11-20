@@ -2,25 +2,25 @@
 Frame Utils
 
 Definition of Ether Frame:
-+-------------+---------+---------------+
-| MAC Address | Length  |    Payload    |
-+-------------+---------+---------------+
-|   6 bytes   | 4 bytes | 0 - 560 bytes |
-+-------------+---------+---------------+
++-----------------+-----------------+---------+---------------+
+| src MAC Address | dst MAC Address | length  |    payload    |
++-----------------+-----------------+-------------------------+
+|     6 bytes     |     6 bytes     | 4 bytes | 0 - 560 bytes |
++-----------------+-----------------+---------+---------------+
 
-Note: the MTU of this emulator is 570 bytes.
+Note: the MTU of this emulator is 576 bytes.
 There's no CRC in the frame.
 """
 import struct
 
 from LinkLayer.error import *
-from .ip_mac import mac_aton
+from .ip_mac import validate_mac
 
-MTU = 570
+MTU = 576
 PAYLOAD_MTU = 560
 
 
-def unpack_frame(frame: bytes) -> (bytes, bytes):
+def unpack_frame(frame: bytes) -> (bytes, bytes, bytes):
     """
     Unpacking Ether frame
     :param frame: frame bytes
@@ -28,13 +28,13 @@ def unpack_frame(frame: bytes) -> (bytes, bytes):
     """
     if len(frame) > MTU:
         raise MTUError("Frame size should not greater than MTU")
-    mac, length = struct.unpack('!6sI', frame[:10])
-    payload = frame[10: 10 + length]
+    src_mac, dst_mac, length = struct.unpack('!6s6sI', frame[:10])
+    payload = frame[16: 16 + length]
 
-    return mac, payload
+    return src_mac, dst_mac, payload
 
 
-def pack_frame(mac, payload: bytes) -> bytes:
+def pack_frame(src_mac, dst_mac, payload: bytes) -> bytes:
     """
     Packing Ether frame
     :param mac: mac address (str, bytes)
@@ -45,13 +45,9 @@ def pack_frame(mac, payload: bytes) -> bytes:
     if length > PAYLOAD_MTU:
         raise MTUError("Payload size Exceed MTU.")
     pass
-    if isinstance(mac, str):
-        mac = mac_aton(mac)
-    elif isinstance(mac, bytes):
-        pass
-    else:
-        raise TypeError('MAC should be string or bytes')
+    src_mac = validate_mac(src_mac)
+    dst_mac = validate_mac(dst_mac)
 
-    frame = struct.pack('!6sI%ds' % length, mac, length, payload)
+    frame = struct.pack('!6s6sI%ds' % length, src_mac, dst_mac, length, payload)
 
     return frame

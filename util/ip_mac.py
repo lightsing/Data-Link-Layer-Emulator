@@ -9,6 +9,7 @@ from socket import inet_aton, inet_ntoa
 with open('config.json') as reader:
     config = json.load(reader)
 
+MAC_PREFIX = b'\x02\x00'
 
 def get_local_ipv4_address() -> str:
     """
@@ -34,7 +35,7 @@ def ip2mac(ip) -> bytes:
         ip_bytes = ip
     else:
         raise TypeError('IP should be string or bytes')
-    return b'\xff\xff' + ip_bytes
+    return MAC_PREFIX + ip_bytes
 
 
 def mac2ip(mac) -> str:

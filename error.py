@@ -4,3 +4,7 @@ class MTUError(Exception):
 
 class MACError(Exception):
     pass
+
+
+class IPv4AddressError(Exception):
+    pass

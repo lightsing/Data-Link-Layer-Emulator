@@ -6,6 +6,8 @@ from socket import *
 
 from socket import inet_aton, inet_ntoa
 
+from error import *
+
 with open('config.json') as reader:
     config = json.load(reader)
 
@@ -32,6 +34,8 @@ def ip2mac(ip) -> bytes:
     if isinstance(ip, str):
         ip_bytes = inet_aton(ip)
     elif isinstance(ip, bytes):
+        if len(ip) != 4:
+            raise IPv4AddressError('IPv4 address should be 4 bytes')
         ip_bytes = ip
     else:
         raise TypeError('IP should be string or bytes')
@@ -44,12 +48,7 @@ def mac2ip(mac) -> str:
     :param mac: MAC Address (bytes or str)
     :return: IP str
     """
-    if isinstance(mac, str):
-        ip_bytes = bytes.fromhex(''.join(mac.split(':')[2:]))
-    elif isinstance(mac, bytes):
-        ip_bytes = mac[2:]
-    else:
-        raise TypeError('MAC should be string or bytes')
+    ip_bytes = validate_mac(mac)[2:]
     return inet_ntoa(ip_bytes)
 
 
@@ -59,7 +58,7 @@ def mac_aton(mac) -> bytes:
     :param mac: MAC Address String
     :return: MAC Address bytes
     """
-    return bytes.fromhex(''.join(mac.split(':')))
+    return validate_mac(mac)
 
 
 def mac_ntoa(mac) -> str:
@@ -70,3 +69,20 @@ def mac_ntoa(mac) -> str:
     """
     mac_string = mac.hex().upper()
     return ':'.join((mac_string[i:i + 2] for i in range(0, len(mac_string), 2)))
+
+
+def validate_mac(mac) -> bytes:
+    if isinstance(mac, str):
+        colon_split = mac.split(':')
+        if len(colon_split) == 6:
+            return bytes.fromhex(''.join(colon_split))
+        dash_split = mac.split(':')
+        if len(dash_split) == 6:
+            return bytes.fromhex(''.join(dash_split))
+        raise MACError('Cannot decode MAC string')
+    elif isinstance(mac, bytes):
+        if len(mac) == 6:
+            return mac
+        raise MACError('MAC address should be 6 bytes')
+    else:
+        raise TypeError('MAC should be string or bytes')

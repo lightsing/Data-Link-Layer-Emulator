@@ -1,6 +1,7 @@
 import json
 import threading
 from socket import *
+from random import random
 
 from util import *
 
@@ -55,6 +56,9 @@ class LinkLayer:
         :param payload: payload bytes
         :return: None
         """
+        if random() < self.config['loss']:
+            # drop frame
+            return
         frame = pack_frame(dst_mac, payload)
         if dst_mac in self.mac_table:
             self.sock.sendto(frame, (self.mac_table[dst_mac], self.port))

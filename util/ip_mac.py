@@ -61,14 +61,15 @@ def mac_aton(mac) -> bytes:
     return validate_mac(mac)
 
 
-def mac_ntoa(mac) -> str:
+def mac_ntoa(mac, separator=':') -> str:
     """
     MAC Address bytes to string
     :param mac: MAC Address bytes
+    :param separator: separator of MAC str, default to ':'
     :return: MAC Address String
     """
     mac_string = mac.hex().upper()
-    return ':'.join((mac_string[i:i + 2] for i in range(0, len(mac_string), 2)))
+    return separator.join((mac_string[i:i + 2] for i in range(0, len(mac_string), 2)))
 
 
 def validate_mac(mac) -> bytes:

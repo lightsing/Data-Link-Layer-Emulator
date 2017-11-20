@@ -14,7 +14,7 @@ There's no CRC in the frame.
 import struct
 
 from LinkLayer.error import *
-from .ip_mac import validate_mac
+from .ip_mac import validate_mac, mac_ntoa
 
 MTU = 576
 HEADER = 16
@@ -62,3 +62,11 @@ class Frame:
         frame = struct.pack('!6s6sI%ds' % length, src_mac, dst_mac, length, payload)
 
         return frame
+
+    def __repr__(self):
+        return self.__str__()
+
+    def __str__(self):
+        return 'src: {0.src_mac}\n' \
+               'dst: {0.dst_mac}\n' \
+               'payload: {0.payload}\n'.format(self.__dict__)

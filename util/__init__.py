@@ -15,4 +15,6 @@ def get_local_ipv4_address() -> str:
     return ip
 
 
-__all__ = ['get_local_ipv4_address', 'ip2mac', 'mac2ip']
+__all__ = ['get_local_ipv4_address',
+           'ip2mac', 'mac2ip',
+           'mac_ntoa', 'mac_aton']

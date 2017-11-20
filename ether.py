@@ -44,3 +44,21 @@ class LinkLayer:
         self.sock = socket(AF_INET, SOCK_DGRAM, 0)
         self.callback = callback
         self.sock.bind((self.listen, self.port))
+
+        self.income_handler = IncomeHandler(self)
+        self.income_handler.start()
+
+    def sendto(self, dst_mac: bytes, payload: bytes):
+        """
+        Sending ether frame
+        :param dst_mac: destination mac address
+        :param payload: payload bytes
+        :return: None
+        """
+        frame = pack_frame(dst_mac, payload)
+        if dst_mac in self.mac_table:
+            self.sock.sendto(frame, (self.mac_table[dst_mac], self.port))
+        else:
+            # flood
+            for _, ip in self.mac_table.items():
+                self.sock.sendto(frame, (ip, self.port))

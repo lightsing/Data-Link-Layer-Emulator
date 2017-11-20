@@ -2,7 +2,7 @@
 from setuptools import setup
 
 setup(
-    name='myVault',
+    name='DataLinkLayerEmulator',
     version='0.1.0',
     author='lightsing',
     url='https://github.com/lightsing/Data-Link-Layer-Emulator/',

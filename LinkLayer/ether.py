@@ -1,9 +1,9 @@
 import json
 import threading
-from socket import *
 from random import random
+from socket import *
 
-from util import *
+from LinkLayer.util import *
 
 
 class IncomeHandler(threading.Thread):

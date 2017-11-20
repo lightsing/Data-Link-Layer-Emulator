@@ -12,8 +12,9 @@ Note: the MTU of this emulator is 570 bytes.
 There's no CRC in the frame.
 """
 import struct
+
+from LinkLayer.error import *
 from .ip_mac import mac_aton
-from error import *
 
 MTU = 570
 PAYLOAD_MTU = 560

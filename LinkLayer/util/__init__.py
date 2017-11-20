@@ -3,7 +3,6 @@ from .ip_mac import get_local_ipv4_address, \
 from .frame import pack_frame, unpack_frame
 from .frame import MTU, PAYLOAD_MTU
 
-
 __all__ = ['get_local_ipv4_address',
            'ip2mac', 'mac2ip',
            'mac_ntoa', 'mac_aton',

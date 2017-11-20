@@ -3,15 +3,15 @@ IP MAC utils
 """
 import json
 from socket import *
-
 from socket import inet_aton, inet_ntoa
 
-from error import *
+from LinkLayer.error import *
 
 with open('config.json') as reader:
     config = json.load(reader)
 
 MAC_PREFIX = b'\x02\x00'
+
 
 def get_local_ipv4_address() -> str:
     """

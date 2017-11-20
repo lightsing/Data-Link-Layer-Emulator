@@ -17,7 +17,8 @@ from LinkLayer.error import *
 from .ip_mac import validate_mac
 
 MTU = 576
-PAYLOAD_MTU = 560
+HEADER = 16
+PAYLOAD_MTU = MTU - HEADER
 
 
 def unpack_frame(frame: bytes) -> (bytes, bytes, bytes):
@@ -28,8 +29,8 @@ def unpack_frame(frame: bytes) -> (bytes, bytes, bytes):
     """
     if len(frame) > MTU:
         raise MTUError("Frame size should not greater than MTU")
-    src_mac, dst_mac, length = struct.unpack('!6s6sI', frame[:10])
-    payload = frame[16: 16 + length]
+    src_mac, dst_mac, length = struct.unpack('!6s6sI', frame[:HEADER])
+    payload = frame[HEADER: HEADER + length]
 
     return src_mac, dst_mac, payload
 

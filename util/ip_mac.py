@@ -21,11 +21,12 @@ def get_local_ipv4_address() -> str:
     test.close()
     return ip
 
-def ip2mac(ip) -> str:
+
+def ip2mac(ip) -> bytes:
     """
     Default IP to MAC mapping
     :param ip: IPv4 Address
-    :return: MAC Address String
+    :return: MAC Address bytes
     """
     if isinstance(ip, str):
         ip_bytes = inet_aton(ip)
@@ -33,14 +34,14 @@ def ip2mac(ip) -> str:
         ip_bytes = ip
     else:
         raise TypeError('IP should be string or bytes')
-    return mac_ntoa(b'\xff\xff' + ip_bytes)
+    return b'\xff\xff' + ip_bytes
 
 
 def mac2ip(mac) -> str:
     """
     Default MAC to IP mapping
     :param mac: MAC Address (bytes or str)
-    :return: IP String
+    :return: IP str
     """
     if isinstance(mac, str):
         ip_bytes = bytes.fromhex(''.join(mac.split(':')[2:]))

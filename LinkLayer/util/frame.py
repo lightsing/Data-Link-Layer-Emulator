@@ -67,6 +67,6 @@ class Frame:
         return self.__str__()
 
     def __str__(self):
-        return 'src: {0.src_mac}\n' \
-               'dst: {0.dst_mac}\n' \
-               'payload: {0.payload}\n'.format(self.__dict__)
+        return 'src: %(src_mac)s\n' \
+               'dst: %(dst_mac)s\n' \
+               'payload: %(payload)s}\n' % self.__dict__

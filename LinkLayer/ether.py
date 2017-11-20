@@ -17,11 +17,11 @@ class IncomeHandler(threading.Thread):
             if address[1] != self.link_layer.config['port']:
                 # ignore any non common port
                 continue
-            src_mac, dst_mac, payload = unpack_frame(frame)
-            if src_mac not in self.link_layer.mac_table:
-                self.link_layer.mac_table[src_mac] = address[0]
+            frame = Frame.unpack_frame(frame)
+            if frame.src_mac not in self.link_layer.mac_table:
+                self.link_layer.mac_table[frame.src_mac] = address[0]
             # calling callback
-            self.link_layer.callback(dst_mac, payload)
+            self.link_layer.callback(frame)
 
 class LinkLayer:
     """
@@ -61,7 +61,7 @@ class LinkLayer:
             return
         if src_mac is None:
             src_mac = self.MAC
-        frame = pack_frame(src_mac, dst_mac, payload)
+        frame = Frame.pack_frame(src_mac, dst_mac, payload)
         if dst_mac in self.mac_table:
             self.sock.sendto(frame, (self.mac_table[dst_mac], self.port))
         else:
